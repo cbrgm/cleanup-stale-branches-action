@@ -17,6 +17,10 @@ inputs:
     description: 'Comma-separated list of prefixes a branch must match to be deleted'
     required: false
     default: ""
+  ignored-prefixes:
+    description: 'Comma-separated list of prefixes a branch must NOT match to be deleted'
+    required: false
+    default: ""
   last-commit-age-days:
     description: 'Number of days since the last commit for a branch to be considered abandoned'
     required: false
@@ -42,6 +46,8 @@ runs:
     - ${{ inputs.ignore-branches }}
     - --allowed-prefixes
     - ${{ inputs.allowed-prefixes }}
+    - --ignored-prefixes
+    - ${{ inputs.ignored-prefixes }}
     - --last-commit-age-days=${{ inputs.last-commit-age-days }}
     - --dry-run=${{ inputs.dry-run }}
     - --rate-limit=${{ inputs.rate-limit }}

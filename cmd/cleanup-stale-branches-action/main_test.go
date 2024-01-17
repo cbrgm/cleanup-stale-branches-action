@@ -73,16 +73,24 @@ func TestContains(t *testing.T) {
 		item  string
 		want  bool
 	}{
-		{"Present", []string{"a", "b", "c"}, "b", true},
-		{"NotPresent", []string{"a", "b", "c"}, "d", false},
+		{"ExactMatchPresent", []string{"a", "b", "c"}, "b", true},
+		{"ExactMatchNotPresent", []string{"a", "b", "c"}, "d", false},
 		{"EmptySlice", []string{}, "a", false},
 		{"EmptyString", []string{"a", "b", ""}, "", true},
+		{"WildcardSimpleMatch", []string{"foo*", "bar"}, "foobar", true},
+		{"WildcardComplexMatch", []string{"release-*", "dev"}, "release-v1", true},
+		{"WildcardNoMatch", []string{"test-*"}, "demo-test", false},
+		{"WildcardEmptyMatch", []string{"test-*"}, "", false},
+		{"WildcardOnly", []string{"*"}, "anything", true},
+		{"MultipleWildcards", []string{"*foo*", "*bar*"}, "myfoobar", true},
+		{"MiddleWildcard", []string{"fo*ar"}, "foobar", true},
+		{"NonMatchingMultipleWildcards", []string{"*foo*", "*bar*"}, "baz", false},
+		{"ExactMatchAmongWildcards", []string{"foo*", "exact", "*bar"}, "exact", true},
 	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := contains(tt.slice, tt.item); got != tt.want {
-				t.Errorf("contains() = %v, want %v", got, tt.want)
+				t.Errorf("contains() = %v, want %v for slice %v and item %v", got, tt.want, tt.slice, tt.item)
 			}
 		})
 	}

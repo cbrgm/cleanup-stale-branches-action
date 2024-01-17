@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -14,13 +15,14 @@ import (
 )
 
 var args struct {
-	IgnoreBranches    string `arg:"--ignore-branches,env:IGNORE_BRANCHES"`
 	AllowedPrefixes   string `arg:"--allowed-prefixes,env:ALLOWED_PREFIXES"`
-	GithubToken       string `arg:"--github-token,required,env:GITHUB_TOKEN"`
+	DryRun            bool   `arg:"--dry-run,env:DRY_RUN"`
 	GithubRepo        string `arg:"--github-repo,required,env:GITHUB_REPOSITORY"`
+	GithubToken       string `arg:"--github-token,required,env:GITHUB_TOKEN"`
+	IgnoreBranches    string `arg:"--ignore-branches,env:IGNORE_BRANCHES"`
+	IgnoredPrefixes   string `arg:"--ignored-prefixes,env:IGNORED_PREFIXES"`
 	LastCommitAgeDays int    `arg:"--last-commit-age-days,env:LAST_COMMIT_AGE_DAYS"`
 	RateLimit         bool   `arg:"--rate-limit,env:RATE_LIMIT"`
-	DryRun            bool   `arg:"--dry-run,env:DRY_RUN"`
 }
 
 type GitHubClientWrapper struct {
@@ -121,6 +123,8 @@ func (g *GitHubClientWrapper) getDeletableBranches(ctx context.Context) ([]strin
 
 	ignoreBranches := strings.Split(args.IgnoreBranches, ",")
 	allowedPrefixes := strings.Split(args.AllowedPrefixes, ",")
+	ignoredPrefixes := strings.Split(args.IgnoredPrefixes, ",")
+
 	deletableBranches := []string{}
 
 	opts := &github.BranchListOptions{
@@ -157,6 +161,11 @@ func (g *GitHubClientWrapper) getDeletableBranches(ctx context.Context) ([]strin
 
 			if !startsWith(allowedPrefixes, branchName) {
 				log.Printf("- Skipping `%s`: does not match allowed prefixes\n", branchName)
+				continue
+			}
+
+			if startsWith(ignoredPrefixes, branchName) {
+				log.Printf("- Skipping `%s`: matches an ignored prefix\n", branchName)
 				continue
 			}
 
@@ -284,8 +293,13 @@ func (g *GitHubClientWrapper) deleteBranches(ctx context.Context, branches []str
 }
 
 func contains(slice []string, item string) bool {
-	for _, v := range slice {
-		if v == item {
+	for _, pattern := range slice {
+		// Replace * with .*, which is the regex equivalent
+		regexPattern := "^" + regexp.QuoteMeta(pattern)
+		regexPattern = strings.ReplaceAll(regexPattern, "\\*", ".*") + "$"
+
+		matched, _ := regexp.MatchString(regexPattern, item)
+		if matched {
 			return true
 		}
 	}
