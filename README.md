@@ -12,13 +12,13 @@
 
 This GitHub Action deems a branch as stale or abandoned based on the following criteria:
 
-- **Not Default Branch**: The branch is not the repository's default branch.
-- **Not Protected**: The branch is not a protected branch.
-- **No Open Pull Requests**: There are no open pull requests that originate from the branch.
-- **Not Base of an Open Pull Request**: The branch is not the base branch for any open pull requests.
-- **Not in Ignore List**: The branch is not included in the optional list of branches to ignore.
-- **Branch Prefix Match**: If specified, the branch name matches one of the given prefixes.
-- **Age**: The branch's last commit is older than the specified number of days (e.g., no commits for 30 days).
+- 🚫 **Not Default Branch**: The branch is not the repository's default branch.
+- 🛡️ **Not Protected**: The branch is not a protected branch.
+- 📭 **No Open Pull Requests**: There are no open pull requests that originate from the branch.
+- 🔀 **Not Base of an Open Pull Request**: The branch is not the base branch for any open pull requests.
+- 🚫 **Not in Ignore List**: The branch is not included in the optional list of branches to ignore.
+- ❌ **(No) Branch Prefix Match**: If specified, the branch name does (not) match one of the given prefixes.
+- ⏰ **Latest Commit Age**: The branch's last commit is older than the specified number of days (e.g., no commits for 30 days).
 
 Branches that meet all these criteria are considered as stale or abandoned and eligible for deletion.
 
@@ -28,9 +28,10 @@ Branches that meet all these criteria are considered as stale or abandoned and e
 - `repository`: **Required** - The target GitHub repository in the format "owner/repo".
 - `ignore-branches`: Optional - Comma-separated list of branches to ignore from deletion.
 - `allowed-prefixes`: Optional - Comma-separated list of prefixes a branch must match to be considered for deletion.
+- `ignored-prefixes`: Optional - Comma-separated list of prefixes a branch must NOT match to be considered for deletion.
 - `last-commit-age-days`: Optional - Number of days since the last commit for a branch to be considered abandoned. Defaults to `30` days.
 - `dry-run`: Optional - Perform a dry run without actually deleting branches. Defaults to `true`, meaning no branches will be deleted.
-- `rate-limit`: Optional - Stop the action if it exceeds 95% of the GitHub API rate limit. Defaults to `true`, ensuring the action is halted before hitting the rate limit.
+- `rate-limit`: Optional - Stop the action if it exceeds 95% of the GitHub API rate limit. Defaults to `true`, ensuring the action is halted before hitting the rate limit e.g. exiting with status code `0` instead of failing.
 
 ### Workflow Usage
 
@@ -75,7 +76,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
           ignore-branches: "foobar,release-*"
-          allowed-prefixes: "feature/,bugfix/"
+          ignore-prefixes: "feature/,bugfix/"
           last-commit-age-days: 60
           dry-run: false
           rate-limit: true
@@ -85,7 +86,7 @@ In this advanced example:
 
 * The action is scheduled to run daily.
 * It ignores the branch `foobar` and branches starting with `release-`.
-* Only branches prefixed with `feature/` or `bugfix/` are considered for deletion.
+* Branches prefixed with `feature/` or `bugfix/` are not considered for deletion.
 * Branches with no commits in the last `60` days are eligible for deletion.
 * The action is not in `dry-run` mode, meaning branches will actually be deleted.
 * The `rate-limit` check is enabled to prevent exceeding the GitHub API rate limit.
