@@ -37,7 +37,10 @@ Branches that meet all these criteria are considered as stale or abandoned and e
 ```yaml
 name: Cleanup Stale Branches
 
-on: [push]
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *' # This schedule runs the workflow at midnight every day
 
 jobs:
   cleanup-stale-branches:
@@ -58,8 +61,9 @@ This advanced example includes optional configurations:
 name: Cleanup Stale Branches
 
 on:
+  workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *' # Runs at midnight every day
+    - cron: '0 0 * * *' # This schedule runs the workflow at midnight every day
 
 jobs:
   cleanup-stale-branches:
@@ -70,7 +74,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
-          ignore-branches: "main,develop,release-*"
+          ignore-branches: "foobar,release-*"
           allowed-prefixes: "feature/,bugfix/"
           last-commit-age-days: 60
           dry-run: false
@@ -80,7 +84,7 @@ jobs:
 In this advanced example:
 
 * The action is scheduled to run daily.
-* It ignores branches starting with `release-`.
+* It ignores the branch `foobar` and branches starting with `release-`.
 * Only branches prefixed with `feature/` or `bugfix/` are considered for deletion.
 * Branches with no commits in the last `60` days are eligible for deletion.
 * The action is not in `dry-run` mode, meaning branches will actually be deleted.
