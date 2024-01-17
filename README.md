@@ -94,6 +94,10 @@ You can build this action from source using `Go`:
 make build
 ```
 
+## Disclaimer
+
+Usage of this action is entirely at your own risk. While this action has been thoroughly tested, there is always the potential for unexpected behavior, especially in different or complex repository setups. I am not responsible for any damage, data loss, or unexpected code deletion that might occur due to misconfiguration or unexpected behavior of this action. Please ensure you have understood the functionality and have correctly configured the action according to your requirements before using it in a production environment.
+
 ## Contributing & License
 
 We welcome and value your contributions to this project! 👍 If you're interested in making improvements or adding features, please refer to our [Contributing Guide](https://github.com/cbrgm/cleanup-stale-branches-action/blob/main/CONTRIBUTING.md). This guide provides comprehensive instructions on how to submit changes, set up your development environment, and more.
