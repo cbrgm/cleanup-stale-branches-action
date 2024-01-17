@@ -38,8 +38,10 @@ runs:
     - ${{ inputs.token }}
     - --github-repo
     - ${{ inputs.repository }}
-    - --ignore-branches=${{ inputs.ignore-branches }}
-    - --allowed-prefixes=${{ inputs.allowed-prefixes }}
+    - --ignore-branches
+    - ${{ inputs.ignore-branches }}
+    - --allowed-prefixes
+    - ${{ inputs.allowed-prefixes }}
     - --last-commit-age-days=${{ inputs.last-commit-age-days }}
     - --dry-run=${{ inputs.dry-run }}
     - --rate-limit=${{ inputs.rate-limit }}
