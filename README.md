@@ -12,13 +12,13 @@
 
 This GitHub Action deems a branch as stale or abandoned based on the following criteria:
 
-- **Not Default Branch**: The branch is not the repository's default branch.
-- **Not Protected**: The branch is not a protected branch.
-- **No Open Pull Requests**: There are no open pull requests that originate from the branch.
-- **Not Base of an Open Pull Request**: The branch is not the base branch for any open pull requests.
-- **Not in Ignore List**: The branch is not included in the optional list of branches to ignore.
-- **(No) Branch Prefix Match**: If specified, the branch name does (not) match one of the given prefixes.
-- **Latest Commit Age**: The branch's last commit is older than the specified number of days (e.g., no commits for 30 days).
+- 🚫 **Not Default Branch**: The branch is not the repository's default branch.
+- 🛡️ **Not Protected**: The branch is not a protected branch.
+- 📭 **No Open Pull Requests**: There are no open pull requests that originate from the branch.
+- 🔀 **Not Base of an Open Pull Request**: The branch is not the base branch for any open pull requests.
+- 🚫 **Not in Ignore List**: The branch is not included in the optional list of branches to ignore.
+- ❌ **(No) Branch Prefix Match**: If specified, the branch name does (not) match one of the given prefixes.
+- ⏰ **Latest Commit Age**: The branch's last commit is older than the specified number of days (e.g., no commits for 30 days).
 
 Branches that meet all these criteria are considered as stale or abandoned and eligible for deletion.
 
