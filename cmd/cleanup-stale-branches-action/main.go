@@ -92,7 +92,7 @@ func parseRepoName(repoName string) string {
 	return repoName
 }
 
-func NewGitHubClientWrapper(ctx context.Context, token string, owner, repo string, rateLimitCheckEnabled bool) *GitHubClientWrapper {
+func NewGitHubClientWrapper(ctx context.Context, token, owner, repo string, rateLimitCheckEnabled bool) *GitHubClientWrapper {
 	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
 	tc := oauth2.NewClient(ctx, ts)
 	ghClient := github.NewClient(tc)

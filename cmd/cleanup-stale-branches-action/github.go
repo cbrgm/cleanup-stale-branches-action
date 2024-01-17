@@ -12,7 +12,7 @@ type GitHubAPI interface {
 	ListBranches(ctx context.Context, owner, repo string, opts *github.BranchListOptions) ([]*github.Branch, *github.Response, error)
 	ListCommits(ctx context.Context, owner, repo string, opts *github.CommitsListOptions) ([]*github.RepositoryCommit, *github.Response, error)
 	GetRepository(ctx context.Context, owner, repo string) (*github.Repository, *github.Response, error)
-	ListPullRequests(ctx context.Context, owner string, repo string, opts *github.PullRequestListOptions) ([]*github.PullRequest, *github.Response, error)
+	ListPullRequests(ctx context.Context, owner, repo string, opts *github.PullRequestListOptions) ([]*github.PullRequest, *github.Response, error)
 	DeleteRef(ctx context.Context, owner, repo, ref string) (*github.Response, error)
 	RateLimits(ctx context.Context) (*github.RateLimits, *github.Response, error)
 }
@@ -55,7 +55,7 @@ func (g *gitHubAPI) GetRepository(ctx context.Context, owner, repo string) (*git
 	return g.client.Repositories.Get(ctx, owner, repo)
 }
 
-func (g *gitHubAPI) ListPullRequests(ctx context.Context, owner string, repo string, opts *github.PullRequestListOptions) ([]*github.PullRequest, *github.Response, error) {
+func (g *gitHubAPI) ListPullRequests(ctx context.Context, owner, repo string, opts *github.PullRequestListOptions) ([]*github.PullRequest, *github.Response, error) {
 	if g.rateLimitCheckEnabled && g.isRateLimitExceeded(ctx) {
 		log.Println(rateLimitedMessage)
 		os.Exit(0)
