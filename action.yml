@@ -12,9 +12,11 @@ inputs:
   ignore-branches:
     description: 'Comma-separated list of branches to ignore'
     required: false
+    default: ""
   allowed-prefixes:
     description: 'Comma-separated list of prefixes a branch must match to be deleted'
     required: false
+    default: ""
   last-commit-age-days:
     description: 'Number of days since the last commit for a branch to be considered abandoned'
     required: false
