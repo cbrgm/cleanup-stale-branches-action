@@ -121,9 +121,9 @@ func (g *GitHubClientWrapper) getDeletableBranches(ctx context.Context) ([]strin
 		return nil, err
 	}
 
-	ignoreBranches := strings.Split(args.IgnoreBranches, ",")
-	allowedPrefixes := strings.Split(args.AllowedPrefixes, ",")
-	ignoredPrefixes := strings.Split(args.IgnoredPrefixes, ",")
+	ignoreBranches := splitNonEmpty(args.IgnoreBranches)
+	allowedPrefixes := splitNonEmpty(args.AllowedPrefixes)
+	ignoredPrefixes := splitNonEmpty(args.IgnoredPrefixes)
 
 	deletableBranches := []string{}
 
@@ -159,13 +159,13 @@ func (g *GitHubClientWrapper) getDeletableBranches(ctx context.Context) ([]strin
 				continue
 			}
 
-			if !startsWith(allowedPrefixes, branchName) {
+			if len(allowedPrefixes) > 0 && !startsWith(allowedPrefixes, branchName) {
 				log.Printf("- Skipping `%s`: does not match allowed prefixes\n", branchName)
 				continue
 			}
 
-			if startsWith(ignoredPrefixes, branchName) {
-				log.Printf("- Skipping `%s`: matches an ignored prefix\n", branchName)
+			if len(ignoredPrefixes) > 0 && startsWith(ignoredPrefixes, branchName) {
+				log.Printf("- Skipping `%s`: does match ignored prefixes\n", branchName)
 				continue
 			}
 
@@ -307,10 +307,20 @@ func contains(slice []string, item string) bool {
 }
 
 func startsWith(prefixes []string, str string) bool {
+	if len(prefixes) == 0 {
+		return false
+	}
 	for _, prefix := range prefixes {
 		if strings.HasPrefix(str, prefix) {
 			return true
 		}
 	}
-	return len(prefixes) == 0
+	return false
+}
+
+func splitNonEmpty(input string) []string {
+	if input == "" {
+		return []string{}
+	}
+	return strings.Split(input, ",")
 }

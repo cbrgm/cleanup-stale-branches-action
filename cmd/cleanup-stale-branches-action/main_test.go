@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func TestParseRepoName(t *testing.T) {
 	tests := []struct {
@@ -131,7 +134,7 @@ func TestStartsWith(t *testing.T) {
 			name:     "Empty prefix list",
 			prefixes: []string{},
 			str:      "testString",
-			want:     true,
+			want:     false,
 		},
 		{
 			name:     "Empty string",
@@ -169,6 +172,30 @@ func TestStartsWith(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := startsWith(tt.prefixes, tt.str); got != tt.want {
 				t.Errorf("startsWith() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestSplitNonEmpty(t *testing.T) {
+	tests := []struct {
+		name  string
+		input string
+		want  []string
+	}{
+		{"EmptyString", "", []string{}},
+		{"SingleElement", "a", []string{"a"}},
+		{"TwoElements", "a,b", []string{"a", "b"}},
+		{"ElementsWithSpaces", "a, b, c", []string{"a", " b", " c"}},
+		{"ElementsWithEmptyString", "a,,c", []string{"a", "", "c"}},
+		{"OnlyCommas", ",,,", []string{"", "", "", ""}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := splitNonEmpty(tt.input)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("splitNonEmpty(%q) = %v, want %v", tt.input, got, tt.want)
 			}
 		})
 	}
