@@ -33,6 +33,14 @@ Branches that meet all these criteria are considered as stale or abandoned and e
 - `dry-run`: Optional - Perform a dry run without actually deleting branches. Defaults to `true`, meaning no branches will be deleted.
 - `rate-limit`: Optional - Stop the action if it exceeds 95% of the GitHub API rate limit. Defaults to `true`, ensuring the action is halted before hitting the rate limit e.g. exiting with status code `0` instead of failing.
 
+### Container Usage
+
+This action can be executed independently from workflows within a container. To do so, use the following command:
+
+```
+podman run --rm -it ghcr.io/cbrgm/cleanup-stale-branches-action:v1 --help
+```
+
 ### Workflow Usage
 
 ```yaml
@@ -90,6 +98,38 @@ In this advanced example:
 * Branches with no commits in the last `60` days are eligible for deletion.
 * The action is not in `dry-run` mode, meaning branches will actually be deleted.
 * The `rate-limit` check is enabled to prevent exceeding the GitHub API rate limit.
+
+### High-level Functionality
+
+```mermaid
+sequenceDiagram
+    participant GitHubAction
+    participant GitHubAPI
+
+    Note over GitHubAction,GitHubAPI: GitHub Action: cleanup-stale-branches-action
+
+    GitHubAction->>GitHubAPI: Initialize (Token, Repo Info)
+    activate GitHubAPI
+    GitHubAPI-->>GitHubAction: Repository Validated
+
+    loop For each Branch in Repository
+        GitHubAction->>GitHubAPI: Fetch Branch Details
+        GitHubAPI-->>GitHubAction: Return Branch Details
+        GitHubAction->>GitHubAction: Evaluate Branch Deletion Criteria
+        alt Branch Meets Criteria
+            alt Dry Run Enabled
+                GitHubAction->>GitHubAction: Log Deletable Branch (No Action)
+            else Dry Run Disabled
+                GitHubAction->>GitHubAPI: Delete Branch
+                GitHubAPI-->>GitHubAction: Branch Deleted
+            end
+        else Branch Does Not Meet Criteria
+            GitHubAction->>GitHubAction: Log Skipping Branch
+        end
+    end
+
+    deactivate GitHubAPI
+```
 
 ### Local Development
 
