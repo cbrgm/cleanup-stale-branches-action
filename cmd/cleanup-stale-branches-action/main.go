@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/alexflint/go-arg"
-	"github.com/google/go-github/v62/github"
+	"github.com/google/go-github/v63/github"
 	"golang.org/x/oauth2"
 )
 
