@@ -84,7 +84,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
           ignore-branches: "foobar,release-*"
-          ignore-prefixes: "feature/,bugfix/"
+          ignored-prefixes: "feature/,bugfix/"
           last-commit-age-days: 60
           dry-run: false
           rate-limit: true
