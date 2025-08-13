@@ -33,6 +33,10 @@ inputs:
     description: 'Stop the action if it exceeds 95% of the GitHub API rate limit'
     required: false
     default: 'true'
+  github-enterprise-url:
+    description: 'The base URL for GitHub Enterprise (if applicable)'
+    required: false
+    default: ''
 
 runs:
   using: 'docker'
@@ -51,6 +55,8 @@ runs:
     - --last-commit-age-days=${{ inputs.last-commit-age-days }}
     - --dry-run=${{ inputs.dry-run }}
     - --rate-limit=${{ inputs.rate-limit }}
+    - --github-enterprise-url
+    - ${{ inputs.github-enterprise-url }}
 
 branding:
   icon: 'git-pull-request'

@@ -32,6 +32,7 @@ Branches that meet all these criteria are considered as stale or abandoned and e
 - `last-commit-age-days`: Optional - Number of days since the last commit for a branch to be considered abandoned. Defaults to `30` days.
 - `dry-run`: Optional - Perform a dry run without actually deleting branches. Defaults to `true`, meaning no branches will be deleted.
 - `rate-limit`: Optional - Stop the action if it exceeds 95% of the GitHub API rate limit. Defaults to `true`, ensuring the action is halted before hitting the rate limit e.g. exiting with status code `0` instead of failing.
+- `github-enterprise-url`: Optional - Allows the action to be used with GitHub Enterprise instances. Specify the url of your GitHub Enterprise instance (e.g., `https://github.mycompany.com`).
 
 ### Container Usage
 
