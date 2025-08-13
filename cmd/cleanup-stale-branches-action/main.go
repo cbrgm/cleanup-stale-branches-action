@@ -15,14 +15,15 @@ import (
 )
 
 var args struct {
-	AllowedPrefixes   string `arg:"--allowed-prefixes,env:ALLOWED_PREFIXES"`
-	DryRun            bool   `arg:"--dry-run,env:DRY_RUN"`
-	GithubRepo        string `arg:"--github-repo,required,env:GITHUB_REPOSITORY"`
-	GithubToken       string `arg:"--github-token,required,env:GITHUB_TOKEN"`
-	IgnoreBranches    string `arg:"--ignore-branches,env:IGNORE_BRANCHES"`
-	IgnoredPrefixes   string `arg:"--ignored-prefixes,env:IGNORED_PREFIXES"`
-	LastCommitAgeDays int    `arg:"--last-commit-age-days,env:LAST_COMMIT_AGE_DAYS"`
-	RateLimit         bool   `arg:"--rate-limit,env:RATE_LIMIT"`
+	AllowedPrefixes     string `arg:"--allowed-prefixes,env:ALLOWED_PREFIXES"`
+	DryRun              bool   `arg:"--dry-run,env:DRY_RUN"`
+	GithubRepo          string `arg:"--github-repo,required,env:GITHUB_REPOSITORY"`
+	GithubToken         string `arg:"--github-token,required,env:GITHUB_TOKEN"`
+	IgnoreBranches      string `arg:"--ignore-branches,env:IGNORE_BRANCHES"`
+	IgnoredPrefixes     string `arg:"--ignored-prefixes,env:IGNORED_PREFIXES"`
+	LastCommitAgeDays   int    `arg:"--last-commit-age-days,env:LAST_COMMIT_AGE_DAYS"`
+	RateLimit           bool   `arg:"--rate-limit,env:RATE_LIMIT"`
+	GitHubEnterpriseUrl string `arg:"--github-enterprise-url,env:GITHUB_ENTERPRISE_URL"`
 }
 
 type GitHubClientWrapper struct {
@@ -41,7 +42,7 @@ func main() {
 	}
 
 	ctx := context.Background()
-	githubClient := NewGitHubClientWrapper(ctx, args.GithubToken, parseRepoOwner(args.GithubRepo), parseRepoName(args.GithubRepo), args.RateLimit)
+	githubClient := NewGitHubClientWrapper(ctx, args.GithubToken, parseRepoOwner(args.GithubRepo), parseRepoName(args.GithubRepo), args.RateLimit, args.GitHubEnterpriseUrl)
 
 	deletableBranches, err := githubClient.getDeletableBranches(ctx)
 	if err != nil {
@@ -94,10 +95,20 @@ func parseRepoName(repoName string) string {
 	return repoName
 }
 
-func NewGitHubClientWrapper(ctx context.Context, token, owner, repo string, rateLimitCheckEnabled bool) *GitHubClientWrapper {
+func NewGitHubClientWrapper(ctx context.Context, token, owner, repo string, rateLimitCheckEnabled bool, gitHubEnterpriseUrl string) *GitHubClientWrapper {
 	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
 	tc := oauth2.NewClient(ctx, ts)
 	ghClient := github.NewClient(tc)
+
+	if gitHubEnterpriseUrl != "" {
+		var err error
+		ghClient, err = ghClient.WithEnterpriseURLs(gitHubEnterpriseUrl, gitHubEnterpriseUrl)
+		if err != nil {
+			log.Printf("Failed to set GitHub Enterprise URLs: %v", err)
+			return nil
+		}
+	}
+
 	apiClient := NewGitHubAPI(ghClient, rateLimitCheckEnabled)
 
 	return &GitHubClientWrapper{
