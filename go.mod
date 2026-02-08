@@ -7,7 +7,7 @@ toolchain go1.25.7
 require (
 	github.com/alexflint/go-arg v1.6.1
 	github.com/google/go-github/v82 v82.0.0
-	golang.org/x/oauth2 v0.34.0
+	golang.org/x/oauth2 v0.35.0
 )
 
 require (
