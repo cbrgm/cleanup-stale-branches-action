@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/google/go-github/v83/github"
+	"github.com/google/go-github/v84/github"
 )
 
 type GitHubAPI interface {
