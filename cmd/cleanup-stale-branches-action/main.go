@@ -98,15 +98,16 @@ func parseRepoName(repoName string) string {
 func NewGitHubClientWrapper(ctx context.Context, token, owner, repo string, rateLimitCheckEnabled bool, gitHubEnterpriseUrl string) *GitHubClientWrapper {
 	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
 	tc := oauth2.NewClient(ctx, ts)
-	ghClient := github.NewClient(tc)
 
+	opts := []github.ClientOptionsFunc{github.WithHTTPClient(tc)}
 	if gitHubEnterpriseUrl != "" {
-		var err error
-		ghClient, err = ghClient.WithEnterpriseURLs(gitHubEnterpriseUrl, gitHubEnterpriseUrl)
-		if err != nil {
-			log.Printf("Failed to set GitHub Enterprise URLs: %v", err)
-			return nil
-		}
+		opts = append(opts, github.WithEnterpriseURLs(gitHubEnterpriseUrl, gitHubEnterpriseUrl))
+	}
+
+	ghClient, err := github.NewClient(opts...)
+	if err != nil {
+		log.Printf("Failed to create GitHub client: %v", err)
+		return nil
 	}
 
 	apiClient := NewGitHubAPI(ghClient, rateLimitCheckEnabled)
