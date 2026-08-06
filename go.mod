@@ -1,8 +1,6 @@
 module github.com/cbrgm/cleanup-stale-branches-action
 
-go 1.25.0
-
-toolchain go1.26.5
+go 1.26.5
 
 require (
 	github.com/alexflint/go-arg v1.6.1
